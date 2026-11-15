@@ -1,9 +1,7 @@
-package com.marcusantosproject.avaliacaofisica.database.model.entity;
+package com.marcusantosproject.avaliacaofisica.database.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "exercicios")

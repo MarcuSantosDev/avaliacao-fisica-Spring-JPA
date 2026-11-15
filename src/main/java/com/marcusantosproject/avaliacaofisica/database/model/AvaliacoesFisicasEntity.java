@@ -1,4 +1,4 @@
-package com.marcusantosproject.avaliacaofisica.database.model.entity;
+package com.marcusantosproject.avaliacaofisica.database.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
