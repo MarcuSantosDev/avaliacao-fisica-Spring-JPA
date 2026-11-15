@@ -1,5 +1,6 @@
 package com.marcusantosproject.avaliacaofisica.controller;
 
+import com.marcusantosproject.avaliacaofisica.dto.AvaliacoesFisicasProjection;
 import com.marcusantosproject.avaliacaofisica.dto.TreinoDto;
 import com.marcusantosproject.avaliacaofisica.exceptions.BadRequestException;
 import com.marcusantosproject.avaliacaofisica.exceptions.NotFoundException;

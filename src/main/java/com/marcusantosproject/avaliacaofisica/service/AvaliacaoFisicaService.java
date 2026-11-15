@@ -6,10 +6,15 @@ import com.marcusantosproject.avaliacaofisica.database.model.AvaliacoesFisicasEn
 import com.marcusantosproject.avaliacaofisica.database.repository.AlunosRepository;
 import com.marcusantosproject.avaliacaofisica.database.repository.AvaliacoesFisicasRepository;
 import com.marcusantosproject.avaliacaofisica.dto.AvaliacaoFisicaDto;
+import com.marcusantosproject.avaliacaofisica.dto.AvaliacoesFisicasProjection;
 import com.marcusantosproject.avaliacaofisica.exceptions.BadRequestException;
 import com.marcusantosproject.avaliacaofisica.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,5 +34,13 @@ public class AvaliacaoFisicaService {
 
         aluno.setAvaliacaoFisica(avaliacaoFisica);
         alunosRepository.save(aluno);
+    }
+
+    public List<AvaliacoesFisicasProjection> getAllAvaliacoes(){
+        return avaliacoesFisicasRepository.getAllAvaliacoes();
+    }
+
+    public Page<AvaliacoesFisicasProjection> getAllAvaliacoesPageable(Integer page, Integer size){
+        return avaliacoesFisicasRepository.getAllAvaliacoesPageable(PageRequest.of(page, size));
     }
 }
