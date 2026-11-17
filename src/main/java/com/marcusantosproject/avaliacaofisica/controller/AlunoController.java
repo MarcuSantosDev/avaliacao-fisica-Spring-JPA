@@ -3,8 +3,6 @@ package com.marcusantosproject.avaliacaofisica.controller;
 import com.marcusantosproject.avaliacaofisica.database.model.AlunosEntity;
 import com.marcusantosproject.avaliacaofisica.database.model.AvaliacoesFisicasEntity;
 import com.marcusantosproject.avaliacaofisica.dto.AlunoDto;
-import com.marcusantosproject.avaliacaofisica.exceptions.BadRequestException;
-import com.marcusantosproject.avaliacaofisica.exceptions.NotFoundException;
 import com.marcusantosproject.avaliacaofisica.service.AlunosService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +34,12 @@ public class AlunoController {
     @GetMapping("/{alunoId}/avaliacao")
     public AvaliacoesFisicasEntity getAvaliacaoFisica(@PathVariable Integer alunoId) {
         return alunosService.getAlunoAvalicacao(alunoId);
+    }
+
+    @DeleteMapping("/{alunoId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removerAluno(@PathVariable Integer alunoId) throws Exception {
+        alunosService.deletarAluno(alunoId);
     }
 
 }
