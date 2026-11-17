@@ -2,14 +2,17 @@ package com.marcusantosproject.avaliacaofisica.service;
 
 import com.marcusantosproject.avaliacaofisica.database.model.AlunosEntity;
 import com.marcusantosproject.avaliacaofisica.database.model.AvaliacoesFisicasEntity;
+import com.marcusantosproject.avaliacaofisica.database.model.TreinosEntity;
 import com.marcusantosproject.avaliacaofisica.database.repository.AlunosRepository;
 import com.marcusantosproject.avaliacaofisica.database.repository.AvaliacoesFisicasRepository;
 import com.marcusantosproject.avaliacaofisica.database.repository.TreinosRepository;
 import com.marcusantosproject.avaliacaofisica.dto.AlunoDto;
 import com.marcusantosproject.avaliacaofisica.exceptions.BadRequestException;
 import com.marcusantosproject.avaliacaofisica.exceptions.NotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,5 +52,28 @@ public class AlunosService {
         }
 
         return avaliacao;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deletarAluno(Integer alunoId) throws Exception {
+        AlunosEntity aluno = alunosRepository.findById(alunoId)
+                .orElseThrow(() -> new NotFoundException("Aluno não encontrado"));
+
+        // 1. Deletar os treinos do aluno
+        List<Integer> treinosAlunoIds = aluno.getTreinos().stream()
+                .map(TreinosEntity::getId)
+                .toList();
+
+        treinosRepository.deleteAllById(treinosAlunoIds);
+
+        // 2. Deletar a avaliação física, caso exista
+        AvaliacoesFisicasEntity avaliacao = aluno.getAvaliacaoFisica();
+
+        if (avaliacao != null) {
+            avaliacoesFisicasRepository.deleteById(avaliacao.getId());
+        }
+
+        // 3. Deletar o aluno
+        alunosRepository.delete(aluno);
     }
 }
