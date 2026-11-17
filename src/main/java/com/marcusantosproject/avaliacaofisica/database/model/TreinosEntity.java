@@ -1,5 +1,6 @@
 package com.marcusantosproject.avaliacaofisica.database.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,8 +23,9 @@ public class TreinosEntity {
     @Column(nullable = false)
     private String nome;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "aluno_id")
+    @JsonIgnore
     private AlunosEntity aluno;
 
     @ManyToMany
