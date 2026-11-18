@@ -55,11 +55,56 @@ security.jwt.expiration=900000
 
 Configure as variáveis de ambiente `DATABASE_PASSWORD` e `JWT_SECRET` de acordo com seu ambiente.
 
-**Importante:** a variável `JWT_SECRET` deve conter uma chave secreta codificada em Base64, com tamanho adequado para o algoritmo de assinatura utilizado. Não compartilhe essa chave nem a envie para o repositório.
+### 4. Gerar a chave secreta JWT
+
+A aplicação utiliza uma chave secreta codificada em Base64 para assinar e validar os tokens JWT.
+
+Cada pessoa deve gerar sua própria chave secreta.
+
+**Windows (PowerShell):**
+
+Execute os comandos abaixo:
+
+```powershell
+$bytes = New-Object byte[] 32
+$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$rng.GetBytes($bytes)
+[Convert]::ToBase64String($bytes)
+$rng.Dispose()
+```
+
+**Linux/macOS:**
+
+```bash
+openssl rand -base64 32
+```
+
+Após gerar a chave, configure-a na variável de ambiente `JWT_SECRET`.
+
+**Windows (PowerShell):**
+
+```powershell
+$env:JWT_SECRET="COLE_A_CHAVE_GERADA_AQUI"
+```
+
+**Linux/macOS:**
+
+```bash
+export JWT_SECRET="COLE_A_CHAVE_GERADA_AQUI"
+```
+
+Configure também a variável `DATABASE_PASSWORD` com a senha do seu banco MySQL.
+
+**Importante:**
+
+- Gere uma chave própria para cada ambiente.
+- Não compartilhe sua chave secreta.
+- Nunca envie a chave para o GitHub.
+- A chave deve possuir pelo menos 256 bits (32 bytes) antes da codificação Base64.
 
 A propriedade `security.jwt.expiration` define o tempo de validade do token em milissegundos. O valor `900000` corresponde a 15 minutos.
 
-### 4. Executar a aplicação
+### 5. Executar a aplicação
 
 Utilizando o Maven:
 
@@ -87,7 +132,7 @@ Após a inicialização, a API estará disponível em:
 http://localhost:8080
 ```
 
-### 5. Acessar a documentação da API
+### 6. Acessar a documentação da API
 
 A documentação interativa dos endpoints está disponível por meio do Swagger UI:
 
