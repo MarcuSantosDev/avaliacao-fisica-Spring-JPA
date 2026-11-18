@@ -1,12 +1,9 @@
 package com.marcusantosproject.avaliacaofisica.database.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthoritiesContainer;
 
 @Entity
 @Table(name = "roles")
@@ -17,12 +14,13 @@ import org.springframework.security.core.authority.GrantedAuthoritiesContainer;
 @Builder
 public class RolesEntity implements GrantedAuthority {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nome;
 
 
     @Override
     public @Nullable String getAuthority() {
-        return name;
+        return nome;
     }
 }
