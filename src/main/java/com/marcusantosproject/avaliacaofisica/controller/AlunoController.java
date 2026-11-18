@@ -7,6 +7,7 @@ import com.marcusantosproject.avaliacaofisica.service.AlunosService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +32,7 @@ public class AlunoController {
         alunosService.criarAluno(alunoDto);
     }
 
+    @PreAuthorize("#alunoId == authentication.principal.id or hasRole('ADMIN')")
     @GetMapping("/{alunoId}/avaliacao")
     public AvaliacoesFisicasEntity getAvaliacaoFisica(@PathVariable Integer alunoId) {
         return alunosService.getAlunoAvalicacao(alunoId);
