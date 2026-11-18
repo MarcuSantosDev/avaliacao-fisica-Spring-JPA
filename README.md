@@ -1,6 +1,6 @@
 # API de Avaliação Física
 
-API REST desenvolvida com **Java 17 e Spring Boot 4.1.2** para gerenciamento de alunos, treinos, exercícios e avaliações físicas. Utiliza Spring Data JPA para persistência de dados, MySQL como banco de dados e Spring Security com JWT para autenticação.
+API REST desenvolvida com **Java 17 e Spring Boot 4.1.2** para gerenciamento de alunos, treinos, exercícios e avaliações físicas. Utiliza Spring Data JPA para persistência de dados, MySQL como banco de dados e Spring Security com JWT para autenticação e autorização.
 
 ## Como executar o projeto
 
@@ -26,7 +26,7 @@ cd avaliacao-fisica-Spring-JPA-JWT
 
 ### 3. Configurar o banco de dados
 
-Crie um banco de dados MySQL e configure as credenciais de acesso no arquivo:
+Configure as credenciais de acesso ao MySQL no arquivo:
 
 ```text
 src/main/resources/application.properties
@@ -144,10 +144,20 @@ http://localhost:8080/swagger-ui/index.html
 ### Segurança e autenticação
 
 - Integração com Spring Security.
-- Implementação de autenticação baseada em JWT.
-- Geração de tokens assinados.
+- Autenticação baseada em JWT.
+- Cadastro e autenticação de usuários.
+- Geração de tokens JWT assinados.
 - Validação da assinatura e expiração dos tokens.
+- Filtro para autenticação das requisições.
+- Controle de acesso baseado em roles.
 - Configuração de chave secreta por variável de ambiente.
+
+### Tratamento de exceções
+
+- Exceções personalizadas para erros de negócio.
+- Tratamento global de exceções.
+- Padronização das respostas de erro.
+- Retorno de códigos HTTP apropriados.
 
 ## Endpoints
 
@@ -156,6 +166,12 @@ Base URL:
 ```text
 http://localhost:8080
 ```
+
+### Autenticação
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| POST | `/v1/auth/**` | Endpoints de autenticação |
 
 ### Alunos
 
@@ -221,11 +237,16 @@ O projeto utiliza arquitetura em camadas, separando as responsabilidades da apli
 ```text
 src/main/java/com/marcusantosproject/avaliacaofisica
 │
+├── AvaliacaoFisicaApplication.java
+│
 ├── config/
+│   ├── JwtAuthenticationFilter.java
+│   ├── SecurityConfiguration.java
 │   └── TokenProvider.java
 │
 ├── controller/
 │   ├── AlunoController.java
+│   ├── AuthController.java
 │   ├── AvaliacoesFisicarController.java
 │   ├── ExerciciosController.java
 │   └── TreinoController.java
@@ -235,22 +256,28 @@ src/main/java/com/marcusantosproject/avaliacaofisica
 │   │   ├── AlunosEntity.java
 │   │   ├── AvaliacoesFisicasEntity.java
 │   │   ├── ExerciciosEntity.java
-│   │   ├── TreinosEntity.java
-│   │   └── RolesEntity.java
+│   │   ├── RolesEntity.java
+│   │   └── TreinosEntity.java
 │   │
 │   └── repository/
 │       ├── AlunosRepository.java
 │       ├── AvaliacoesFisicasRepository.java
 │       ├── ExerciciosRepository.java
-│       ├── TreinosRepository.java
-│       └── RolesRepository.java
+│       ├── RolesRepository.java
+│       └── TreinosRepository.java
 │
 ├── dto/
 │   ├── AlunoDto.java
 │   ├── AvaliacaoFisicaDto.java
 │   ├── AvaliacoesFisicasProjection.java
 │   ├── ExerciciosDto.java
+│   ├── LoginRequestDto.java
+│   ├── RegisterRequestDto.java
+│   ├── TokenResponseDto.java
 │   └── TreinoDto.java
+│
+├── enums/
+│   └── RoleTypeEnum.java
 │
 ├── exceptions/
 │   ├── BadRequestException.java
@@ -262,23 +289,26 @@ src/main/java/com/marcusantosproject/avaliacaofisica
 │
 └── service/
     ├── AlunosService.java
+    ├── AuthService.java
     ├── AvaliacaoFisicaService.java
     ├── ExerciciosService.java
-    └── TreinoService.java
+    ├── TreinoService.java
+    └── UserDetailsServiceImp.java
 ```
 
 ### Responsabilidades das camadas
 
 | Camada | Responsabilidade |
 |---|---|
+| Config | Configurações da aplicação e componentes de segurança. |
 | Controller | Receber e responder às requisições HTTP. |
 | Service | Implementar as regras de negócio. |
 | Model | Representar as entidades do banco de dados. |
 | Repository | Realizar operações de persistência. |
 | DTO | Transportar e validar dados entre as camadas. |
+| Enums | Definir constantes e tipos enumerados. |
 | Exceptions | Definir exceções personalizadas. |
 | Handler | Centralizar o tratamento de exceções. |
-| Config | Concentrar configurações da aplicação e componentes de segurança. |
 
 ## Conceitos aplicados
 
@@ -294,8 +324,9 @@ src/main/java/com/marcusantosproject/avaliacaofisica
 - Gerenciamento de transações.
 - Paginação com `Pageable` e `Page`.
 - Java Streams e Lambda Expressions.
-- Autenticação e segurança com Spring Security.
+- Autenticação e autorização com Spring Security.
 - JSON Web Token (JWT).
+- Controle de acesso baseado em roles.
 
 ## Autor
 
