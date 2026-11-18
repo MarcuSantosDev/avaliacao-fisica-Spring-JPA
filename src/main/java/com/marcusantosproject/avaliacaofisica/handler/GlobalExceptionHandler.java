@@ -5,9 +5,12 @@ import com.marcusantosproject.avaliacaofisica.exceptions.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 
 import java.util.stream.Collectors;
 
@@ -72,5 +75,21 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<StandardError> handleAccessDenied(
+            AccessDeniedException ex,
+            HttpServletRequest request) {
+
+        StandardError error = StandardError.builder()
+                .timestamp(System.currentTimeMillis())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error("Forbidden")
+                .mensage(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
     }
 }
