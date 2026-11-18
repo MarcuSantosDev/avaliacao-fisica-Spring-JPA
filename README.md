@@ -1,6 +1,6 @@
 # API de Avaliação Física
 
-API REST desenvolvida com **Java 17 e Spring Boot 4.1.2** para gerenciamento de alunos, treinos, exercícios e avaliações físicas.
+API REST desenvolvida com **Java 17 e Spring Boot 4.1.2** para gerenciamento de alunos, treinos, exercícios e avaliações físicas. Utiliza Spring Data JPA para persistência de dados, MySQL como banco de dados e Spring Security com JWT para autenticação.
 
 ## Como executar o projeto
 
@@ -15,13 +15,13 @@ Antes de executar a aplicação, é necessário ter instalado:
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/MarcuSantosDev/avaliacao-fisica-Spring-JPA.git
+git clone https://github.com/MarcuSantosDev/avaliacao-fisica-Spring-JPA-JWT.git
 ```
 
 ### 2. Acessar o diretório do projeto
 
 ```bash
-cd avaliacao-fisica-Spring-JPA
+cd avaliacao-fisica-Spring-JPA-JWT
 ```
 
 ### 3. Configurar o banco de dados
@@ -32,7 +32,32 @@ Crie um banco de dados MySQL e configure as credenciais de acesso no arquivo:
 src/main/resources/application.properties
 ```
 
-Configure a URL de conexão, usuário e senha de acordo com seu ambiente.
+Exemplo de configuração:
+
+```properties
+spring.application.name=avaliacao-fisica
+server.port=8080
+
+# Database configuration
+spring.datasource.url=jdbc:mysql://localhost:3306/gym?createDatabaseIfNotExist=true
+spring.datasource.username=${DATABASE_USER:root}
+spring.datasource.password=${DATABASE_PASSWORD}
+
+# JPA configuration
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+# JWT Configuration
+security.jwt.secret=${JWT_SECRET}
+security.jwt.expiration=900000
+```
+
+Configure as variáveis de ambiente `DATABASE_PASSWORD` e `JWT_SECRET` de acordo com seu ambiente.
+
+**Importante:** a variável `JWT_SECRET` deve conter uma chave secreta codificada em Base64, com tamanho adequado para o algoritmo de assinatura utilizado. Não compartilhe essa chave nem a envie para o repositório.
+
+A propriedade `security.jwt.expiration` define o tempo de validade do token em milissegundos. O valor `900000` corresponde a 15 minutos.
 
 ### 4. Executar a aplicação
 
@@ -45,11 +70,13 @@ mvn spring-boot:run
 Ou, utilizando o Maven Wrapper:
 
 **Windows:**
+
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
 **Linux/macOS:**
+
 ```bash
 ./mvnw spring-boot:run
 ```
@@ -72,8 +99,11 @@ http://localhost:8080/swagger-ui/index.html
 
 - Java 17
 - Spring Boot 4.1.2
+- Spring Web MVC
 - Spring Data JPA
 - Hibernate
+- Spring Security
+- JSON Web Token (JWT)
 - MySQL
 - Maven
 - Lombok
@@ -110,6 +140,14 @@ http://localhost:8080/swagger-ui/index.html
 - Cadastro de exercícios.
 - Listagem de exercícios.
 - Consulta de exercícios por grupo muscular.
+
+### Segurança e autenticação
+
+- Integração com Spring Security.
+- Implementação de autenticação baseada em JWT.
+- Geração de tokens assinados.
+- Validação da assinatura e expiração dos tokens.
+- Configuração de chave secreta por variável de ambiente.
 
 ## Endpoints
 
@@ -184,6 +222,7 @@ O projeto utiliza arquitetura em camadas, separando as responsabilidades da apli
 src/main/java/com/marcusantosproject/avaliacaofisica
 │
 ├── config/
+│   └── TokenProvider.java
 │
 ├── controller/
 │   ├── AlunoController.java
@@ -196,13 +235,15 @@ src/main/java/com/marcusantosproject/avaliacaofisica
 │   │   ├── AlunosEntity.java
 │   │   ├── AvaliacoesFisicasEntity.java
 │   │   ├── ExerciciosEntity.java
-│   │   └── TreinosEntity.java
+│   │   ├── TreinosEntity.java
+│   │   └── RolesEntity.java
 │   │
 │   └── repository/
 │       ├── AlunosRepository.java
 │       ├── AvaliacoesFisicasRepository.java
 │       ├── ExerciciosRepository.java
-│       └── TreinosRepository.java
+│       ├── TreinosRepository.java
+│       └── RolesRepository.java
 │
 ├── dto/
 │   ├── AlunoDto.java
@@ -237,7 +278,7 @@ src/main/java/com/marcusantosproject/avaliacaofisica
 | DTO | Transportar e validar dados entre as camadas. |
 | Exceptions | Definir exceções personalizadas. |
 | Handler | Centralizar o tratamento de exceções. |
-| Config | Concentrar configurações da aplicação. |
+| Config | Concentrar configurações da aplicação e componentes de segurança. |
 
 ## Conceitos aplicados
 
@@ -253,6 +294,8 @@ src/main/java/com/marcusantosproject/avaliacaofisica
 - Gerenciamento de transações.
 - Paginação com `Pageable` e `Page`.
 - Java Streams e Lambda Expressions.
+- Autenticação e segurança com Spring Security.
+- JSON Web Token (JWT).
 
 ## Autor
 
